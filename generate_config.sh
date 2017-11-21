@@ -43,12 +43,12 @@ MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
 
 DBHOSTEXT="10.44.1.10:3306"
 
-DBNAME=mailcow
-DBUSER=mailcow
+DBNAME=email
+DBUSER=mail
 
 # Please use long, random alphanumeric strings (A-Za-z0-9)
 DBPASS=$(</dev/urandom tr -dc A-Za-z0-9 | head -c 28)
-DBROOT=$(</dev/urandom tr -dc A-Za-z0-9 | head -c 28)
+#DBROOT=$(</dev/urandom tr -dc A-Za-z0-9 | head -c 28)
 
 # ------------------------------
 # HTTP/S Bindings
