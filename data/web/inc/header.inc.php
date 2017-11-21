@@ -90,7 +90,6 @@
         <?php
         if ($_SESSION['mailcow_cc_role'] == 'admin') {
         ?>
-        <li><a href data-toggle="modal" data-target="#RestartSOGo"><span style="font-size: 12px;" class="glyphicon glyphicon-refresh" aria-hidden="true"></span> <?= $lang['header']['restart_sogo']; ?></a></li>
         <?php
         }
         ?>
@@ -108,7 +107,7 @@
             foreach ($row as $key => $val):
           ?>
             <li><a href="<?= htmlspecialchars($val); ?>"><?= htmlspecialchars($key); ?></a></li>
-          <?php 
+          <?php
             endforeach;
           }
           ?>

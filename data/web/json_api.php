@@ -821,22 +821,6 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                   echo '{}';
                 }
               break;
-              case "sogo":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('sogo-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('sogo-mailcow');
-                }
-                if (isset($logs) && !empty($logs)) {
-                  echo json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
               case "rspamd-history":
                 // 0 is first record, so empty is fine
                 if (isset($extra)) {
@@ -2313,7 +2297,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                 'msg' => 'Incomplete post data'
               ));
             }
-          break;          
+          break;
           case "resource":
             if (isset($_POST['items']) && isset($_POST['attr'])) {
               $items = (array)json_decode($_POST['items'], true);

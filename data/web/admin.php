@@ -21,7 +21,6 @@ $tfa_data = get_tfa();
     <ul class="dropdown-menu">
     <li role="presentation"><a href="#tab-postfix-logs" aria-controls="tab-postfix-logs" role="tab" data-toggle="tab">Postfix</a></li>
     <li role="presentation"><a href="#tab-dovecot-logs" aria-controls="tab-dovecot-logs" role="tab" data-toggle="tab">Dovecot</a></li>
-    <li role="presentation"><a href="#tab-sogo-logs" aria-controls="tab-sogo-logs" role="tab" data-toggle="tab">SOGo</a></li>
     <li role="presentation"><a href="#tab-fail2ban-logs" aria-controls="tab-fail2ban-logs" role="tab" data-toggle="tab">Fail2ban</a></li>
     <li role="presentation"><a href="#tab-rspamd-history" aria-controls="tab-rspamd-history" role="tab" data-toggle="tab">Rspamd</a></li>
     <li role="presentation"><a href="#tab-autodiscover-logs" aria-controls="tab-autodiscover-logs" role="tab" data-toggle="tab">Autodiscover</a></li>
@@ -430,7 +429,7 @@ $tfa_data = get_tfa();
               <td><input class="input-sm form-control" data-id="app_links" type="text" name="href" required value="<?=$val;?>"></td>
               <td><a href="#" role="button" class="btn btn-xs btn-default" type="button"><?=$lang['admin']['remove_row'];?></a></td>
             </tr>
-            <?php 
+            <?php
               endforeach;
             }
             foreach ($MAILCOW_APPS as $app):
@@ -447,7 +446,7 @@ $tfa_data = get_tfa();
           <div class="btn-group">
             <button class="btn btn-success" id="edit_selected" data-item="admin" data-id="app_links" data-reload="no" data-api-url='edit/app_links' data-api-attr='{}' href="#"><?=$lang['admin']['save'];?></button>
             <button class="btn btn-default" type="button" id="add_app_link_row"><?=$lang['admin']['add_row'];?></button>
-          </div> 
+          </div>
         </form>
       </div>
     </div>
@@ -489,22 +488,6 @@ $tfa_data = get_tfa();
     </div>
   </div>
 
-  <div role="tabpanel" class="tab-pane" id="tab-sogo-logs">
-    <div class="panel panel-default">
-      <div class="panel-heading">SOGo <span class="badge badge-info log-lines"></span>
-        <div class="btn-group pull-right">
-          <button class="btn btn-xs btn-default add_log_lines" data-post-process="general_syslog" data-table="sogo_log" data-log-url="sogo" data-nrows="100">+ 100</button>
-          <button class="btn btn-xs btn-default add_log_lines" data-post-process="general_syslog" data-table="sogo_log" data-log-url="sogo" data-nrows="1000">+ 1000</button>
-          <button class="btn btn-xs btn-default" id="refresh_sogo_log"><?=$lang['admin']['refresh'];?></button>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="table-responsive">
-          <table class="table table-striped table-condensed" id="sogo_log"></table>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div role="tabpanel" class="tab-pane" id="tab-fail2ban-logs">
     <div class="panel panel-default">

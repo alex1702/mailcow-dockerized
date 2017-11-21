@@ -146,7 +146,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               <button class="btn btn-default" id="add_item" data-id="add_domain" data-api-url='add/domain' data-api-attr='{}' href="#"><?=$lang['admin']['add'];?></button>
 						</div>
 					</div>
-					<p><span class="glyphicon glyphicon-exclamation-sign text-danger"></span> <?=$lang['add']['restart_sogo_hint'];?></p>
+					<!--<p><span class="glyphicon glyphicon-exclamation-sign text-danger"></span> <?=$lang['add']['restart_sogo_hint'];?></p>-->
 				</form>
       </div>
     </div>
@@ -334,7 +334,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               ?>
               </select>
             </div>
-          </div> 
+          </div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="host1"><?=$lang['add']['hostname'];?></label>
 						<div class="col-sm-10">

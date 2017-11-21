@@ -57,14 +57,14 @@ $autodiscover_config = array(
   'activesync' => array(
     'url' => 'https://'.$mailcow_hostname.($https_port == 443 ? '' : ':'.$https_port).'/Microsoft-Server-ActiveSync',
   ),
-  'caldav' => array(
+  /*'caldav' => array(
     'server' => $mailcow_hostname,
     'port' => $https_port,
   ),
   'carddav' => array(
     'server' => $mailcow_hostname,
     'port' => $https_port,
-  ),
+  ),*/
 );
 unset($https_port);
 
@@ -72,7 +72,7 @@ unset($https_port);
 $DEFAULT_LANG = 'en';
 
 // Available languages
-$AVAILABLE_LANGUAGES = array('de', 'en', 'es', 'fr', 'nl', 'pl', 'pt', 'ru', 'it');
+$AVAILABLE_LANGUAGES = array('de');
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -89,11 +89,6 @@ $SHOW_DKIM_PRIV_KEYS = false;
 
 // mailcow Apps - buttons on login screen
 $MAILCOW_APPS = array(
-  array(
-    'name' => 'SOGo',
-    'link' => '/SOGo/',
-    'description' => 'SOGo is a web-based client for email, address book and calendar.'
-  ),
   // array(
     // 'name' => 'Roundcube',
     // 'link' => '/rc/',

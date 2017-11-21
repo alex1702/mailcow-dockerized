@@ -4,10 +4,7 @@
  */
 
 $lang['footer']['loading'] = 'Einen Moment bitte...';
-$lang['header']['restart_sogo'] = 'SOGo neustarten';
-$lang['footer']['restart_sogo'] = 'SOGo neustarten';
 $lang['footer']['restart_now'] = 'Jetzt neustarten';
-$lang['footer']['restart_sogo_info'] = 'Einige Änderungen an Domains benötigen einen Neustart SOGos. Hier können Sie SOGo neustarten.<br><br><b>Wichtig:</b> Ein korrekter Neustart SOGos kann eine Weile in Anspruch nehmen, bitte warten Sie, bis der Prozess vollständig beendet wurde.';
 
 $lang['footer']['confirm_delete'] = 'Löschen bestätigen';
 $lang['footer']['delete_these_items'] = 'Sind Sie sicher, dass die Änderungen an Elementen mit folgender ID durchgeführt werden sollen?';
@@ -196,7 +193,6 @@ $lang['user']['create_syncjob'] = 'Neuen Sync-Job erstellen';
 
 $lang['start']['dashboard'] = '%s - Dashboard';
 $lang['start']['start_rc'] = 'Roundcube öffnen';
-$lang['start']['start_sogo'] = 'SOGo öffnen';
 $lang['start']['mailcow_apps_detail'] = 'Verwenden Sie mailcow Apps, um E-Mails abzurufen, Kalender- und Kontakte zu verwalten und vieles mehr.';
 $lang['start']['mailcow_panel'] = 'mailcow UI starten';
 $lang['start']['mailcow_panel_description'] = 'Die mailcow Steuerung steht sowohl für Administratoren als auch Mailbox-Benutzer zur Verfügung.';
@@ -397,7 +393,6 @@ $lang['add']['select_domain'] = 'Bitte zuerst eine Domain auswählen';
 $lang['add']['password'] = 'Passwort';
 $lang['add']['password_repeat'] = 'Passwort (Wiederholung)';
 $lang['add']['previous'] = 'Vorherige Seite';
-$lang['add']['restart_sogo_hint'] = 'Der SOGo Container muss nach dem Hinzufügen einer neuen Domain neugestartet werden!';
 $lang['add']['goto_null'] = 'Nachrichten sofort verwerfen';
 $lang['add']['validation_success'] = 'Erfolgreich validiert';
 $lang['add']['activate_filter_warn'] = 'Alle anderen Filter diesen Typs werden deaktiviert, falls dieses Script aktiv markiert wird.';

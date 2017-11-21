@@ -169,37 +169,6 @@ $(document).ready(function() {
   // Init Bootstrap Selectpicker
   $('select').selectpicker();
 
-  // Trigger SOGo restart
-  $('#triggerRestartSogo').click(function(){
-    $(this).prop("disabled",true);
-    $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-spin"></span> ');
-    $('#statusTriggerRestartSogo').text('Stopping SOGo workers, this may take a while... ');
-    $.ajax({
-      method: 'get',
-      url: '/inc/ajax/sogo_ctrl.php',
-      data: {
-        'ajax': true,
-        'ACTION': 'stop'
-      },
-      success: function(data) {
-        $('#statusTriggerRestartSogo').append(data);
-        $('#statusTriggerRestartSogo').append('<br>Starting SOGo...');
-        $.ajax({
-          method: 'get',
-          url: '/inc/ajax/sogo_ctrl.php',
-          data: {
-            'ajax': true,
-            'ACTION': 'start'
-          },
-          success: function(data) {
-            $('#statusTriggerRestartSogo').append(data);
-            $('#triggerRestartSogo').html('<span class="glyphicon glyphicon-ok"></span> ');
-          }
-        });
-      }
-    });
-  });
-
   // CSRF
   $('<input type="hidden" value="<?= $_SESSION['CSRF']['TOKEN']; ?>">').attr('id', 'csrf_token').attr('name', 'csrf_token').appendTo('form');
   if (sessionStorage.scrollTop != "undefined") {

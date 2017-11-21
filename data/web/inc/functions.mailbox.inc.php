@@ -48,7 +48,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             );
             return false;
           }
-          $validity = strtotime("+".$_data["validity"]." hour"); 
+          $validity = strtotime("+".$_data["validity"]." hour");
           $letters = 'abcefghijklmnopqrstuvwxyz1234567890';
           $random_name = substr(str_shuffle($letters), 0, 24);
           try {
@@ -742,7 +742,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               WHERE `domain` = :domain");
             $stmt->execute(array(':domain' => $domain));
             $DomainData = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt = $pdo->prepare("SELECT 
+            $stmt = $pdo->prepare("SELECT
               COUNT(*) as count,
               COALESCE(ROUND(SUM(`quota`)/1048576), 0) as `quota`
                 FROM `mailbox`
@@ -852,7 +852,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             return false;
           }
           try {
-            $stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `active`) 
+            $stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `active`)
               VALUES (:username, :password_hashed, :name, :maildir, :quota_b, :local_part, :domain, :active)");
             $stmt->execute(array(
               ':username' => $username,
@@ -915,7 +915,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             );
             return false;
           }
-          
+
           if ($kind != 'location' && $kind != 'group' && $kind != 'thing') {
             $_SESSION['return'] = array(
               'type' => 'danger',
@@ -987,7 +987,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             return false;
           }
           try {
-            $stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `active`, `multiple_bookings`, `kind`) 
+            $stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `active`, `multiple_bookings`, `kind`)
               VALUES (:name, 'RESOURCE', :description, 'RESOURCE', 0, :local_part, :domain, :active, :multiple_bookings, :kind)");
             $stmt->execute(array(
               ':name' => $name,
@@ -1231,7 +1231,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               return false;
             }
             try {
-              $stmt = $pdo->prepare("UPDATE `spamalias` SET `validity` = (`validity` + 3600) WHERE 
+              $stmt = $pdo->prepare("UPDATE `spamalias` SET `validity` = (`validity` + 3600) WHERE
                 `address` = :address AND
                 `validity` >= :validity");
               $stmt->execute(array(
@@ -1707,7 +1707,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $description  = $_data['description'];
               $active = intval($_data['active']);
               try {
-                $stmt = $pdo->prepare("UPDATE `domain` SET 
+                $stmt = $pdo->prepare("UPDATE `domain` SET
                 `description` = :description
                   WHERE `domain` = :domain");
                 $stmt->execute(array(
@@ -1750,7 +1750,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               }
               try {
                 // todo: should be using api here
-                $stmt = $pdo->prepare("SELECT 
+                $stmt = $pdo->prepare("SELECT
                     COUNT(*) AS count,
                     MAX(COALESCE(ROUND(`quota`/1048576), 0)) AS `biggest_mailbox`,
                     COALESCE(ROUND(SUM(`quota`)/1048576), 0) AS `quota_all`
@@ -1818,7 +1818,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
                 return false;
               }
               try {
-                $stmt = $pdo->prepare("UPDATE `domain` SET 
+                $stmt = $pdo->prepare("UPDATE `domain` SET
                 `relay_all_recipients` = :relay_all_recipients,
                 `backupmx` = :backupmx,
                 `active` = :active,
@@ -1880,7 +1880,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $quota_m    = (!empty($_data['quota'])) ? $_data['quota'] : ($is_now['quota'] / 1048576);
               $quota_b    = $quota_m * 1048576;
               $password   = (!empty($_data['password'])) ? $_data['password'] : null;
-              $password2  = (!empty($_data['password2'])) ? $_data['password2'] : null; 
+              $password2  = (!empty($_data['password2'])) ? $_data['password2'] : null;
             }
             else {
               $_SESSION['return'] = array(
@@ -2238,7 +2238,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             }
             $stmt = $pdo->prepare("SELECT `domain` FROM `domain`
               WHERE `domain` NOT IN (
-                SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl` 
+                SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl`
                   WHERE `logged_in_as` = :logged_in_as
                     AND `send_as` LIKE '@%')");
             $stmt->execute(array(
@@ -2253,7 +2253,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             $stmt = $pdo->prepare("SELECT `address` FROM `alias`
               WHERE `goto` != :goto
                 AND `address` NOT IN (
-                  SELECT `send_as` FROM `sender_acl` 
+                  SELECT `send_as` FROM `sender_acl`
                     WHERE `logged_in_as` = :logged_in_as
                       AND `send_as` NOT LIKE '@%')");
             $stmt->execute(array(
@@ -2902,11 +2902,11 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
             if (!empty($row)) {
               $_data = $row['target_domain'];
             }
-            $stmt = $pdo->prepare("SELECT 
+            $stmt = $pdo->prepare("SELECT
                 `domain`,
                 `description`,
                 `aliases`,
-                `mailboxes`, 
+                `mailboxes`,
                 `maxquota`,
                 `quota`,
                 `relayhost`,
@@ -2921,7 +2921,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               ':domain' => $_data
             ));
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (empty($row)) { 
+            if (empty($row)) {
               return false;
             }
             $stmt = $pdo->prepare("SELECT COUNT(*) AS `count`,
@@ -3236,7 +3236,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
                 'msg' => 'MySQL: '.$e
               );
               return false;
-            }	
+            }
           }
           $_SESSION['return'] = array(
             'type' => 'success',
@@ -3266,7 +3266,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               );
               return false;
             }
-            try {
+/*            try {
               $stmt = $pdo->prepare("DELETE FROM `sogo_cache_folder` WHERE `c_uid` = :username");
               $stmt->execute(array(
                 ':username' => $username
@@ -3278,7 +3278,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
                 'msg' => 'MySQL: '.$e
               );
               return false;
-            }
+            }*/
           }
           $_SESSION['return'] = array(
             'type' => 'success',
@@ -3552,7 +3552,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $stmt->execute(array(
                 ':username' => $username
               ));
-              $stmt = $pdo->prepare("DELETE FROM `sogo_user_profile` WHERE `c_uid` = :username");
+/*              $stmt = $pdo->prepare("DELETE FROM `sogo_user_profile` WHERE `c_uid` = :username");
               $stmt->execute(array(
                 ':username' => $username
               ));
@@ -3579,7 +3579,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $stmt = $pdo->prepare("DELETE FROM `sogo_folder_info` WHERE `c_path2` = :username");
               $stmt->execute(array(
                 ':username' => $username
-              ));
+              ));*/
               $stmt = $pdo->prepare("SELECT `address`, `goto` FROM `alias`
                   WHERE `goto` REGEXP :username");
               $stmt->execute(array(':username' => '(^|,)'.$username.'($|,)'));
@@ -3640,7 +3640,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $stmt->execute(array(
                 ':username' => $name
               ));
-              $stmt = $pdo->prepare("DELETE FROM `sogo_user_profile` WHERE `c_uid` = :username");
+/*              $stmt = $pdo->prepare("DELETE FROM `sogo_user_profile` WHERE `c_uid` = :username");
               $stmt->execute(array(
                 ':username' => $name
               ));
@@ -3667,7 +3667,7 @@ function mailbox($_action, $_type, $_data = null, $attr = null) {
               $stmt = $pdo->prepare("DELETE FROM `sogo_folder_info` WHERE `c_path2` = :username");
               $stmt->execute(array(
                 ':username' => $name
-              ));
+              ));*/
             }
             catch (PDOException $e) {
               $_SESSION['return'] = array(

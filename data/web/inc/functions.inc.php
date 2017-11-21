@@ -310,7 +310,7 @@ function edit_admin_account($postarray) {
 		}
 		$password_hashed = hash_password($password);
 		try {
-			$stmt = $pdo->prepare("UPDATE `admin` SET 
+			$stmt = $pdo->prepare("UPDATE `admin` SET
 				`password` = :password_hashed,
 				`username` = :username1
 					WHERE `username` = :username2");
@@ -330,7 +330,7 @@ function edit_admin_account($postarray) {
 	}
 	else {
 		try {
-			$stmt = $pdo->prepare("UPDATE `admin` SET 
+			$stmt = $pdo->prepare("UPDATE `admin` SET
 				`username` = :username1
 					WHERE `username` = :username2");
 			$stmt->execute(array(
@@ -488,7 +488,7 @@ function user_get_alias_details($username) {
     return false;
   }
 }
-function is_valid_domain_name($domain_name) { 
+function is_valid_domain_name($domain_name) {
 	if (empty($domain_name)) {
 		return false;
 	}
@@ -512,7 +512,7 @@ function set_tfa($postarray) {
       return false;
   }
   $username = $_SESSION['mailcow_cc_username'];
-  
+
   $stmt = $pdo->prepare("SELECT `password` FROM `admin`
       WHERE `username` = :user");
   $stmt->execute(array(':user' => $username));
@@ -524,7 +524,7 @@ function set_tfa($postarray) {
     );
     return false;
   }
-  
+
 	switch ($postarray["tfa_method"]) {
 		case "yubi_otp":
       $key_id = (!isset($postarray["key_id"])) ? 'unidentified' : $postarray["key_id"];
@@ -556,7 +556,7 @@ function set_tfa($postarray) {
 			try {
         // We could also do a modhex translation here
         $yubico_modhex_id = substr($postarray["otp_token"], 0, 12);
-        $stmt = $pdo->prepare("DELETE FROM `tfa` 
+        $stmt = $pdo->prepare("DELETE FROM `tfa`
           WHERE `username` = :username
             AND (`authmech` != 'yubi_otp')
             OR (`authmech` = 'yubi_otp' AND `secret` LIKE :modhex)");
@@ -708,7 +708,7 @@ function get_tfa($username = null) {
       WHERE `username` = :username AND `active` = '1'");
   $stmt->execute(array(':username' => $username));
   $row = $stmt->fetch(PDO::FETCH_ASSOC);
-  
+
 	switch ($row["authmech"]) {
 		case "yubi_otp":
       $data['name'] = "yubi_otp";
@@ -771,7 +771,7 @@ function verify_tfa_login($username, $token) {
       WHERE `username` = :username AND `active` = '1'");
   $stmt->execute(array(':username' => $username));
   $row = $stmt->fetch(PDO::FETCH_ASSOC);
-  
+
 	switch ($row["authmech"]) {
 		case "yubi_otp":
 			if (!ctype_alnum($token) || strlen($token) != 44) {
@@ -880,7 +880,7 @@ function get_u2f_registrations($username) {
 }
 function get_logs($container, $lines = false) {
   if ($lines === false) {
-    $lines = $GLOBALS['LOG_LINES'] - 1; 
+    $lines = $GLOBALS['LOG_LINES'] - 1;
   }
 	global $lang;
 	global $redis;
@@ -909,21 +909,6 @@ function get_logs($container, $lines = false) {
     }
     else {
       $data = $redis->lRange('POSTFIX_MAILLOG', 0, intval($lines));
-    }
-    if ($data) {
-      foreach ($data as $json_line) {
-        $data_array[] = json_decode($json_line, true);
-      }
-      return $data_array;
-    }
-  }
-  if ($container == "sogo-mailcow") {
-    if (!is_numeric($lines)) {
-      list ($from, $to) = explode('-', $lines);
-      $data = $redis->lRange('SOGO_LOG', intval($from), intval($to));
-    }
-    else {
-      $data = $redis->lRange('SOGO_LOG', 0, intval($lines));
     }
     if ($data) {
       foreach ($data as $json_line) {
