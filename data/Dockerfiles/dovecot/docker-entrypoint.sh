@@ -9,7 +9,6 @@ sed -i "/^\$DBNAME/c\\\$DBNAME='${DBNAME}';" /usr/local/bin/imapsync_cron.pl
 # Create missing directories
 [[ ! -d /usr/local/etc/dovecot/sql/ ]] && mkdir -p /usr/local/etc/dovecot/sql/
 [[ ! -d /var/vmail/sieve ]] && mkdir -p /var/vmail/sieve
-[[ ! -d /etc/sogo ]] && mkdir -p /etc/sogo
 
 # Set Dovecot sql config parameters, escape " in db password
 DBPASS=$(echo ${DBPASS} | sed 's/"/\\"/g')
@@ -98,7 +97,6 @@ if [[ $(stat -c %U /var/vmail/) != "vmail" ]] ; then chown -R vmail:vmail /var/v
 RAND_USER=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
 RAND_PASS=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 24 | head -n 1)
 echo ${RAND_USER}:$(doveadm pw -s SHA1 -p ${RAND_PASS}) > /usr/local/etc/dovecot/dovecot-master.passwd
-echo ${RAND_USER}:${RAND_PASS} > /etc/sogo/sieve.creds
 
 # 401 is user dovecot
 if [[ ! -f /mail_crypt/ecprivkey.pem || ! -f /mail_crypt/ecpubkey.pem ]]; then
