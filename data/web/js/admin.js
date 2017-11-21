@@ -17,10 +17,6 @@ jQuery(function($){
     e.preventDefault();
     draw_dovecot_logs();
   });
-  $("#refresh_sogo_log").on('click', function(e) {
-    e.preventDefault();
-    draw_sogo_logs();
-  });
   $("#refresh_fail2ban_log").on('click', function(e) {
     e.preventDefault();
     draw_fail2ban_logs();
@@ -31,7 +27,7 @@ jQuery(function($){
   });
   $("#import_dkim_legend").on('click', function(e) {
     e.preventDefault();
-    $('#import_dkim_arrow').toggleClass("animation"); 
+    $('#import_dkim_arrow').toggleClass("animation");
   });
   function draw_autodiscover_logs() {
     ft_autodiscover_logs = FooTable.init('#autodiscover_log', {
@@ -112,39 +108,6 @@ jQuery(function($){
         jsonp: false,
         error: function () {
           console.log('Cannot draw fail2ban log table');
-        },
-        success: function (data) {
-          return process_table_data(data, 'general_syslog');
-        }
-      }),
-      "empty": lang.empty,
-      "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"position": "left","connectors": false,"placeholder": lang.filter_table},
-      "sorting": {"enabled": true},
-      "on": {
-        "ready.ft.table": function(e, ft){
-          heading = ft.$el.parents('.tab-pane').find('.panel-heading')
-          $(heading).children('.log-lines').text(function(){
-            var ft_paging = ft.use(FooTable.Paging)
-            return ft_paging.totalRows;
-          })
-        }
-      }
-    });
-  }
-  function draw_sogo_logs() {
-    ft_sogo_logs = FooTable.init('#sogo_log', {
-      "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
-        {"name":"priority","title":lang.priority,"style":{"width":"80px"}},
-        {"name":"message","title":lang.message},
-      ],
-      "rows": $.ajax({
-        dataType: 'json',
-        url: '/api/v1/get/logs/sogo',
-        jsonp: false,
-        error: function () {
-          console.log('Cannot draw sogo log table');
         },
         success: function (data) {
           return process_table_data(data, 'general_syslog');
@@ -430,7 +393,7 @@ jQuery(function($){
         var info_class = ["notice", "info", "debug"];
         if (jQuery.inArray(item.priority, danger_class) !== -1) {
           item.priority = '<span class="label label-danger">' + item.priority + '</span>';
-        } 
+        }
         else if (jQuery.inArray(item.priority, warning_class) !== -1) {
           item.priority = '<span class="label label-warning">' + item.priority + '</span>';
         }
@@ -445,7 +408,6 @@ jQuery(function($){
   draw_postfix_logs();
   draw_autodiscover_logs();
   draw_dovecot_logs();
-  draw_sogo_logs();
   draw_fail2ban_logs();
   draw_domain_admins();
   draw_fwd_hosts();
