@@ -45,22 +45,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <?php
-        if (isset($_SESSION['mailcow_locale'])) {
-        ?>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="lang-sm lang-lbl" lang="<?= $_SESSION['mailcow_locale']; ?>"></span><span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <?php
-            foreach ($AVAILABLE_LANGUAGES as $language) {
-            ?>
-            <li<?= ($_SESSION['mailcow_locale'] == $language) ? ' class="active"' : ''; ?>><a href="?<?= http_build_query(array_merge($_GET, array('lang' => $language))); ?>"><span class="lang-xs lang-lbl-full" lang="<?= $language; ?>"></span></a></li>
-            <?php
-            }
-            ?>
-          </ul>
-        </li>
-        <?php
-        }
         if (isset($_SESSION['mailcow_cc_role'])) {
         ?>
         <li class="dropdown">

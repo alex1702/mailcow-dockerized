@@ -193,7 +193,7 @@ $lang['user']['create_syncjob'] = 'Neuen Sync-Job erstellen';
 
 $lang['start']['dashboard'] = '%s - Dashboard';
 $lang['start']['start_rc'] = 'Roundcube öffnen';
-$lang['start']['mailcow_apps_detail'] = 'Verwenden Sie mailcow Apps, um E-Mails abzurufen, Kalender- und Kontakte zu verwalten und vieles mehr.';
+$lang['start']['mailcow_apps_detail'] = 'Verwenden Sie Apps, um E-Mails abzurufen, Kalender- und Kontakte zu verwalten und vieles mehr.';
 $lang['start']['mailcow_panel'] = 'mailcow UI starten';
 $lang['start']['mailcow_panel_description'] = 'Die mailcow Steuerung steht sowohl für Administratoren als auch Mailbox-Benutzer zur Verfügung.';
 $lang['start']['mailcow_panel_detail'] = '<b>Domain-Administratoren</b> erstellen, verändern oder löschen Mailboxen, verwalten die Domäne und sehen sonstige Einstellungen ein.<br>

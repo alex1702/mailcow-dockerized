@@ -32,10 +32,10 @@ if ($https_port === FALSE) {
 $autodiscover_config = array(
   // General autodiscover service type: "activesync" or "imap"
   // emClient uses autodiscover, but does not support ActiveSync. mailcow excludes emClient from ActiveSync.
-  'autodiscoverType' => 'activesync',
+  'autodiscoverType' => 'imap',
   // If autodiscoverType => activesync, also use ActiveSync (EAS) for Outlook desktop clients (>= Outlook 2013 on Windows)
   // Outlook for Mac does not support ActiveSync
-  'useEASforOutlook' => 'yes',
+  'useEASforOutlook' => 'no',
   // Please don't use STARTTLS-enabled service ports in the "port" variable.
   // The autodiscover service will always point to SMTPS and IMAPS (TLS-wrapped services).
   // The autoconfig service will additionally announce the STARTTLS-enabled ports, specified in the "tlsport" variable.
@@ -54,22 +54,11 @@ $autodiscover_config = array(
     'port' => array_pop(explode(':', getenv('SMTPS_PORT'))),
     'tlsport' => array_pop(explode(':', getenv('SUBMISSION_PORT'))),
   ),
-  'activesync' => array(
-    'url' => 'https://'.$mailcow_hostname.($https_port == 443 ? '' : ':'.$https_port).'/Microsoft-Server-ActiveSync',
-  ),
-  /*'caldav' => array(
-    'server' => $mailcow_hostname,
-    'port' => $https_port,
-  ),
-  'carddav' => array(
-    'server' => $mailcow_hostname,
-    'port' => $https_port,
-  ),*/
 );
 unset($https_port);
 
 // Change default language, "de", "en", "es", "nl", "pt", "ru"
-$DEFAULT_LANG = 'en';
+$DEFAULT_LANG = 'de';
 
 // Available languages
 $AVAILABLE_LANGUAGES = array('de');

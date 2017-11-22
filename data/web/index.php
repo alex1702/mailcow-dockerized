@@ -24,7 +24,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
         <div class="panel-heading"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <?= $lang['login']['login']; ?></div>
         <div class="panel-body">
           <div class="text-center mailcow-logo"><img src="<?=($main_logo = customize('get', 'main_logo')) ? $main_logo : '/img/cow_mailcow.svg';?>" alt="mailcow"></div>
-          <legend>mailcow UI</legend>
+          <legend>elaon Mail UI</legend>
             <form method="post" autofill="off">
             <div class="form-group">
               <label class="sr-only" for="login_user"><?= $lang['login']['username']; ?></label>
@@ -42,20 +42,6 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             </div>
             <div class="form-group">
               <button type="submit" class="btn btn-success" value="Login"><?= $lang['login']['login']; ?></button>
-              <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="lang-sm lang-lbl" lang="<?= $_SESSION['mailcow_locale']; ?>"></span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <?php
-                  foreach ($AVAILABLE_LANGUAGES as $language):
-                  ?>
-                  <li<?= ($_SESSION['mailcow_locale'] == $language) ? ' class="active"' : ''; ?>><a href="?<?= http_build_query(array_merge($_GET, array('lang' => $language))) ?>"><span class="lang-xs lang-lbl-full" lang="<?= $language; ?>"></span></a></li>
-                  <?php
-                  endforeach;
-                  ?>
-                </ul>
-              </div>
             </div>
             </form>
             <?php
@@ -65,7 +51,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             <?php
             endif;
             ?>
-          <legend>mailcow Apps</legend>
+          <legend>Apps</legend>
           <?php
           foreach ($MAILCOW_APPS as $app):
           ?>
@@ -77,7 +63,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             foreach ($row as $key => $val):
           ?>
             <a href="<?= htmlspecialchars($val); ?>" role="button" class="btn btn-lg btn-default"><?= htmlspecialchars($key); ?></a>&nbsp;
-          <?php 
+          <?php
             endforeach;
           }
           ?>
@@ -91,9 +77,9 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
         </div>
         <div id="collapse1" class="panel-collapse collapse">
           <div class="panel-body">
-            <p><span style="border-bottom: 1px dotted #999;">mailcow UI</span></p>
+            <p><span style="border-bottom: 1px dotted #999;">Elaon Mail UI</span></p>
             <p><?= $lang['start']['mailcow_panel_detail']; ?></p>
-            <p><span style="border-bottom: 1px dotted #999;">mailcow Apps</span></p>
+            <p><span style="border-bottom: 1px dotted #999;">Apps</span></p>
             <p><?= $lang['start']['mailcow_apps_detail']; ?></p>
           </div>
         </div>

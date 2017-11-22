@@ -15,11 +15,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/footer.php';
 $(window).scroll(function() {
   sessionStorage.scrollTop = $(this).scrollTop();
 });
-// Select language and reopen active URL without POST
-function setLang(sel) {
-  $.post( "<?= $_SERVER['REQUEST_URI']; ?>", {lang: sel} );
-  window.location.href = window.location.pathname + window.location.search;
-}
 
 $(document).ready(function() {
   window.mailcow_alert_box = function(message, type) {
