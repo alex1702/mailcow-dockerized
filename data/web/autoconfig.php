@@ -29,8 +29,8 @@ header('Content-Type: application/xml');
 <clientConfig version="1.1">
     <emailProvider id="<?=$mailcow_hostname; ?>">
       <domain>%EMAILDOMAIN%</domain>
-      <displayName>A mailcow mail server</displayName>
-      <displayShortName>mail server</displayShortName>
+      <displayName>elaon mail server</displayName>
+      <displayShortName>Elaon Mail</displayShortName>
 
       <incomingServer type="imap">
          <hostname><?=$autodiscover_config['imap']['server']; ?></hostname>
@@ -93,6 +93,6 @@ if (count($records) == 0 || $records[0]['target'] != '') { ?>
     </emailProvider>
 
     <webMail>
-      <loginPage url="https://<?=$mailcow_hostname; ?><?php if ($port != 443) echo ':'.$port; ?>/SOGo/" />
+      <loginPage url="https://<?=$mailcow_hostname; ?><?php if ($port != 443) echo ':'.$port; ?>/rc/" />
     </webMail>
 </clientConfig>

@@ -207,18 +207,6 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
   </div>
   <?php
   endif;
-  // Rest EAS devices
-  if ($_SESSION['acl']['eas_reset'] == 1):
-  ?>
-  <div class="row">
-    <div class="col-md-3 col-xs-5 text-right"><?=$lang['user']['eas_reset'];?>:</div>
-    <div class="col-md-9 col-xs-7">
-    <button class="btn btn-xs btn-default" id="delete_selected" data-text="<?=$lang['user']['eas_reset'];?>?" data-item="<?= $username; ?>" data-id="eas_cache" data-api-url='delete/eas_cache' href="#"><?=$lang['user']['eas_reset_now'];?></button>
-    <p class="help-block"><?=$lang['user']['eas_reset_help'];?></p>
-    </div>
-  </div>
-  <?php
-  endif;
   ?>
 </div>
 </div>

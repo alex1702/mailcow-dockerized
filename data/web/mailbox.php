@@ -10,7 +10,6 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#tab-domains" aria-controls="tab-domains" role="tab" data-toggle="tab"><?=$lang['mailbox']['domains'];?></a></li>
     <li role="presentation"><a href="#tab-mailboxes" aria-controls="tab-mailboxes" role="tab" data-toggle="tab"><?=$lang['mailbox']['mailboxes'];?></a></li>
-    <li role="presentation"><a href="#tab-resources" aria-controls="tab-resources" role="tab" data-toggle="tab"><?=$lang['mailbox']['resources'];?></a></li>
     <li class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?=$lang['mailbox']['aliases'];?>
       <span class="caret"></span></a>
@@ -73,30 +72,6 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
                   <li><a id="delete_selected" data-id="mailbox" data-api-url='delete/mailbox' href="#"><?=$lang['mailbox']['remove'];?></a></li>
                 </ul>
                 <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addMailboxModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_mailbox'];?></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div role="tabpanel" class="tab-pane" id="tab-resources">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title"><?=$lang['mailbox']['resources'];?></h3>
-            </div>
-            <div class="table-responsive">
-              <table id="resource_table" class="table table-striped"></table>
-            </div>
-            <div class="mass-actions-mailbox">
-              <div class="btn-group">
-                <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="resource" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
-                <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#"><?=$lang['mailbox']['quick_actions'];?> <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a id="edit_selected" data-id="resource" data-api-url='edit/resource' data-api-attr='{"active":"1"}' href="#"><?=$lang['mailbox']['activate'];?></a></li>
-                  <li><a id="edit_selected" data-id="resource" data-api-url='edit/resource' data-api-attr='{"active":"0"}' href="#"><?=$lang['mailbox']['deactivate'];?></a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a id="delete_selected" data-id="resource" data-api-url='delete/resource' href="#"><?=$lang['mailbox']['remove'];?></a></li>
-                </ul>
-                <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addResourceModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_resource'];?></a>
               </div>
             </div>
           </div>

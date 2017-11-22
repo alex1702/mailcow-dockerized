@@ -270,50 +270,6 @@ jQuery(function($){
       }
     });
   }
-  function draw_resource_table() {
-    ft_resource_table = FooTable.init('#resource_table', {
-      "columns": [
-        {"name":"chkbox","title":"","style":{"maxWidth":"60px","width":"60px"},"filterable": false,"sortable": false,"type":"html"},
-        {"sorted": true,"name":"description","title":lang.description,"style":{"width":"250px"}},
-        {"name":"kind","title":lang.kind},
-        {"name":"domain","title":lang.domain,"breakpoints":"xs sm"},
-        {"name":"multiple_bookings","filterable": false,"style":{"maxWidth":"120px","width":"120px"},"title":lang.multiple_bookings,"breakpoints":"xs sm"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
-        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
-      ],
-      "empty": lang.empty,
-      "rows": $.ajax({
-        dataType: 'json',
-        url: '/api/v1/get/resource/all',
-        jsonp: false,
-        error: function () {
-          console.log('Cannot draw resource table');
-        },
-        success: function (data) {
-          $.each(data, function (i, item) {
-            item.action = '<div class="btn-group">' +
-              '<a href="/edit.php?resource=' + encodeURI(item.name) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
-              '<a href="#" id="delete_selected" data-id="single-resource" data-api-url="delete/resource" data-item="' + encodeURI(item.name) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
-              '</div>';
-            item.chkbox = '<input type="checkbox" data-id="resource" name="multi_select" value="' + item.name + '" />';
-          });
-        }
-      }),
-      "paging": {
-        "enabled": true,
-        "limit": 5,
-        "size": pagination_size
-      },
-      "filtering": {
-        "enabled": true,
-        "position": "left",
-        "placeholder": lang.filter_table
-      },
-      "sorting": {
-        "enabled": true
-      }
-    });
-  }
 
   function draw_alias_table() {
     ft_alias_table = FooTable.init('#alias_table', {

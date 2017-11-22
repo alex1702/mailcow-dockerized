@@ -41,34 +41,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 	<key>PayloadContent</key>
 	<array>
 		<dict>
-			<key>CalDAVAccountDescription</key>
-			<string><?php echo $domain; ?></string>
-			<key>CalDAVHostName</key>
-			<string><?php echo $autodiscover_config['caldav']['server']; ?></string>
-			<key>CalDAVPort</key>
-			<real><?php echo $autodiscover_config['caldav']['port']; ?></real>
-			<key>CalDAVPrincipalURL</key>
-			<string>/SOGo/dav/<?php echo $email; ?></string>
-			<key>CalDAVUseSSL</key>
-			<true/>
-			<key>CalDAVUsername</key>
-			<string><?php echo $email; ?></string>
-			<key>PayloadDescription</key>
-			<string>Configures CalDAV account.</string>
-			<key>PayloadDisplayName</key>
-			<string>CalDAV (<?php echo $domain; ?>)</string>
-			<key>PayloadIdentifier</key>
-			<string><?php echo $identifier; ?>.CalDAV</string>
-			<key>PayloadOrganization</key>
-			<string></string>
-			<key>PayloadType</key>
-			<string>com.apple.caldav.account</string>
-			<key>PayloadUUID</key>
-			<string>FC898573-EBA8-48AF-93BD-BFA0C9778FA7</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
 			<key>EmailAccountDescription</key>
 			<string><?php echo $domain; ?></string>
 			<key>EmailAccountType</key>
@@ -120,37 +92,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 			<key>SMIMEEnabled</key>
 			<false/>
 		</dict>
-		<dict>
-			<key>CardDAVAccountDescription</key>
-			<string><?php echo $domain; ?></string>
-			<key>CardDAVHostName</key>
-			<string><?php echo $autodiscover_config['carddav']['server']; ?></string>
-			<key>CardDAVPort</key>
-			<integer><?php echo $autodiscover_config['carddav']['port']; ?></integer>
-			<key>CardDAVPrincipalURL</key>
-			<string>/SOGo/dav/<?php echo $email; ?></string>
-			<key>CardDAVUseSSL</key>
-			<true/>
-			<key>CardDAVUsername</key>
-			<string><?php echo $email; ?></string>
-			<key>PayloadDescription</key>
-			<string>Configures CardDAV accounts</string>
-			<key>PayloadDisplayName</key>
-			<string>CardDAV (<?php echo $domain; ?>)</string>
-			<key>PayloadIdentifier</key>
-			<string><?php echo $identifier; ?>.carddav</string>
-			<key>PayloadOrganization</key>
-			<string></string>
-			<key>PayloadType</key>
-			<string>com.apple.carddav.account</string>
-			<key>PayloadUUID</key>
-			<string>0797EF2B-B1F1-4BC7-ABCD-4580862252B4</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>PayloadDescription</key>
-	<string>IMAP, CalDAV, CardDAV</string>
+	<string>IMAP</string>
 	<key>PayloadDisplayName</key>
 	<string><?php echo $domain; ?> Mailcow</string>
 	<key>PayloadIdentifier</key>
