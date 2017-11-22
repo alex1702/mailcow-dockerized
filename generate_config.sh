@@ -41,7 +41,7 @@ MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
 # SQL database configuration
 # ------------------------------
 
-DBHOSTEXT="10.44.1.10:3306"
+DBHOSTEXT=10.44.1.10:3306
 
 DBNAME=email
 DBUSER=mail

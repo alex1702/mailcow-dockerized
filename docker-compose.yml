@@ -5,7 +5,7 @@ services:
       image: tecnativa/tcp-proxy
       environment:
         LISTEN: ":3306"
-        TALK: "${DBHOSTEXT}"
+        TALK: ${DBHOSTEXT}
       restart: always
       networks:
         mailcow-network:
