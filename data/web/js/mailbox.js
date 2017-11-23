@@ -481,7 +481,6 @@ jQuery(function($){
 
   draw_domain_table();
   draw_mailbox_table();
-  draw_resource_table();
   draw_alias_table();
   draw_aliasdomain_table();
   draw_sync_job_table();
