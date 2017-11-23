@@ -293,7 +293,9 @@ networks:
 
 volumes:
   vmail-vol-1:
-  mysql-vol-1:
+    driver: nfs
+    driver_opts:
+      share: 172.16.1.1:/storage/vmail
   dkim-vol-1:
   redis-vol-1:
   rspamd-vol-1:
