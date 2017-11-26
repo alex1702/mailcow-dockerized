@@ -144,7 +144,7 @@ while true; do
       log_f "Found A record for autoconfig.${SQL_DOMAIN}: ${A_CONFIG}"
       if [[ ${IPV4:-ERR} == ${A_CONFIG} ]] || [[ ${SKIP_IP_CHECK} == "y" ]]; then
         log_f "Confirmed A record autoconfig.${SQL_DOMAIN}"
-        VALIDATED_CONFIG_DOMAINS+=("autoconfig.${SQL_DOMAIN}")
+#        VALIDATED_CONFIG_DOMAINS+=("autoconfig.${SQL_DOMAIN}")
       else
         log_f "Cannot match your IP ${IPV4} against hostname autoconfig.${SQL_DOMAIN} (${A_CONFIG})"
       fi
@@ -157,7 +157,7 @@ while true; do
       log_f "Found A record for autodiscover.${SQL_DOMAIN}: ${A_DISCOVER}"
       if [[ ${IPV4:-ERR} == ${A_DISCOVER} ]] || [[ ${SKIP_IP_CHECK} == "y" ]]; then
         log_f "Confirmed A record autodiscover.${SQL_DOMAIN}"
-        VALIDATED_CONFIG_DOMAINS+=("autodiscover.${SQL_DOMAIN}")
+ #       VALIDATED_CONFIG_DOMAINS+=("autodiscover.${SQL_DOMAIN}")
       else
         log_f "Cannot match your IP ${IPV4} against hostname autodiscover.${SQL_DOMAIN} (${A_DISCOVER})"
       fi
