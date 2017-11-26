@@ -27,7 +27,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.5
+      image: mailcow/clamd-custom:1.5
       build: ./data/Dockerfiles/clamd
       restart: always
       environment:
@@ -40,7 +40,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.14
+      image: mailcow/rspamd-custom:1.14
       build: ./data/Dockerfiles/rspamd
       stop_grace_period: 30s
       depends_on:
@@ -63,7 +63,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.5
+      image: mailcow/phpfpm-custom:1.5
       build: ./data/Dockerfiles/phpfpm
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
@@ -94,7 +94,7 @@ services:
             - phpfpm
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.12
+      image: mailcow/dovecot-custom:1.12
       build: ./data/Dockerfiles/dovecot
       cap_add:
         - NET_BIND_SERVICE
@@ -129,7 +129,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.7
+      image: mailcow/postfix-custom:1.7
       build: ./data/Dockerfiles/postfix
       volumes:
         - ./data/conf/postfix:/opt/postfix/conf
@@ -199,7 +199,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.24
+      image: mailcow/acme-custom:1.24
       build: ./data/Dockerfiles/acme
 #      dns:
 #        - 172.22.1.254
@@ -222,7 +222,7 @@ services:
             - acme
 
     fail2ban-mailcow:
-      image: mailcow/fail2ban:1.9
+      image: mailcow/fail2ban-custom:1.9
       build: ./data/Dockerfiles/fail2ban
       stop_grace_period: 30s
       depends_on:
@@ -242,7 +242,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.10
+      image: mailcow/watchdog-custom:1.10
       build: ./data/Dockerfiles/watchdog
       volumes:
         - vmail-vol-1:/vmail:ro
@@ -261,7 +261,7 @@ services:
             - watchdog
 
     dockerapi-mailcow:
-      image: mailcow/dockerapi:1.2
+      image: mailcow/dockerapi-custom:1.2
       restart: always
       build: ./data/Dockerfiles/dockerapi
       oom_score_adj: -10
