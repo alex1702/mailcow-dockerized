@@ -204,7 +204,6 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'admi
 <?php
 endif;
 ?>
-
 <div id="ConfirmDeleteModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">

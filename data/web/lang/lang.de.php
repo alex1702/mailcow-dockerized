@@ -175,7 +175,6 @@ $lang['user']['edit'] = 'Bearbeiten';
 $lang['user']['remove'] = 'Entfernen';
 $lang['user']['create_syncjob'] = 'Neuen Sync-Job erstellen';
 
-
 $lang['start']['mailcow_apps_detail'] = 'Verwenden Sie mailcow Apps, um E-Mails abzurufen, Kalender- und Kontakte zu verwalten und vieles mehr.';
 $lang['start']['mailcow_panel_detail'] = '<b>Domain-Administratoren</b> erstellen, verändern oder löschen Mailboxen, verwalten die Domäne und sehen sonstige Einstellungen ein.<br>
 	Als <b>Mailbox-Benutzer</b> erstellen Sie hier zeitlich limitierte Aliasse, ändern das Verhalten des Spamfilters, setzen ein neues Passwort und vieles mehr.';

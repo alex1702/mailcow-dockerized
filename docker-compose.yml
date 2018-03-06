@@ -303,6 +303,7 @@ services:
         mailcow-network:
           aliases:
             - dockerapi
+
     ipv6nat:
       image: robbertkl/ipv6nat
       restart: always
@@ -327,7 +328,6 @@ volumes:
 #    driver: nfs
 #    driver_opts:
 #      share: 172.16.1.1:/storage/vmail
-  dkim-vol-1:
   redis-vol-1:
   rspamd-vol-1:
   postfix-vol-1:
