@@ -19,8 +19,6 @@ services:
       restart: always
       environment:
         - TZ=${TZ}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
       networks:
@@ -38,8 +36,6 @@ services:
         - SKIP_CLAMD=${SKIP_CLAMD:-n}
       volumes:
         - ./data/conf/clamav/:/etc/clamav/
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
       networks:
@@ -65,8 +61,6 @@ services:
       restart: always
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       hostname: rspamd
       networks:
         mailcow-network:
@@ -106,8 +100,6 @@ services:
       restart: always
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       networks:
         mailcow-network:
           aliases:
@@ -143,8 +135,6 @@ services:
         nofile:
           soft: 20000
           hard: 40000
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
       hostname: ${MAILCOW_HOSTNAME}
@@ -174,8 +164,6 @@ services:
         - "${SMTPS_PORT:-465}:465"
         - "${SUBMISSION_PORT:-587}:587"
       restart: always
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
       hostname: ${MAILCOW_HOSTNAME}
@@ -189,8 +177,6 @@ services:
       restart: always
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       networks:
         mailcow-network:
           aliases:
@@ -226,8 +212,6 @@ services:
       restart: always
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       networks:
         mailcow-network:
           aliases:
@@ -241,8 +225,6 @@ services:
       build: ./data/Dockerfiles/acme
       sysctls:
         - net.ipv6.conf.all.disable_ipv6=${SYSCTL_IPV6_DISABLED:-0}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       environment:
         - LOG_LINES=${LOG_LINES:-9999}
         - ADDITIONAL_SAN=${ADDITIONAL_SAN}
@@ -278,8 +260,6 @@ services:
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - SNAT_TO_SOURCE=${SNAT_TO_SOURCE:-n}
       network_mode: "host"
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       volumes:
         - /lib/modules:/lib/modules:ro
 
@@ -302,8 +282,6 @@ services:
         - USE_WATCHDOG=${USE_WATCHDOG:-n}
         - WATCHDOG_NOTIFY_EMAIL=${WATCHDOG_NOTIFY_EMAIL}
         - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
-      dns:
-        - ${IPV4_NETWORK:-172.22.1}.254
       networks:
         mailcow-network:
           aliases:
@@ -325,7 +303,6 @@ services:
         mailcow-network:
           aliases:
             - dockerapi
-
     ipv6nat:
       image: robbertkl/ipv6nat
       restart: always
