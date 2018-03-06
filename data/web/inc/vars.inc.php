@@ -57,6 +57,10 @@ $autodiscover_config = array(
 );
 unset($https_port);
 
+// If false, we will use DEFAULT_LANG
+// Uses HTTP_ACCEPT_LANGUAGE header
+$DETECT_LANGUAGE = true;
+
 // Change default language, "de", "en", "es", "nl", "pt", "ru"
 $DEFAULT_LANG = 'de';
 
@@ -86,7 +90,7 @@ $MAILCOW_APPS = array(
 );
 
 // Rows until pagination begins
-$PAGINATION_SIZE = 10;
+$PAGINATION_SIZE = 20;
 
 // Default number of rows/lines to display (log table)
 $LOG_LINES = 100;
