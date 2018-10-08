@@ -9,6 +9,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_enforce_tls=yes
   -o smtpd_tls_security_level=encrypt
   -o tls_preempt_cipherlist=yes
+  -o cleanup_service_name=submission-header-cleanup
 588 inet n      -       n       -       -       smtpd
   -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o smtpd_tls_auth_only=no
@@ -67,6 +68,10 @@ zeyple    unix  -       n       n       -       -       pipe
 # start whitelist_fwd
 127.0.0.1:10027 inet n n n - 0 spawn user=nobody argv=/usr/local/bin/whitelist_forwardinghosts.sh
 # end whitelist_fwd
+
+# header cleanup script (IP-stripping)
+submission-header-cleanup unix n - n    -       0       cleanup
+  -o header_checks=regexp:/opt/postfix/conf/submission_header_cleanup
 
 # start watchdog-specific
 589 inet n      -       n       -       -       smtpd
