@@ -37,7 +37,6 @@ log_msg() {
     redis-cli -h redis LPUSH WATCHDOG_LOG "{\"time\":\"$(date +%s)\",\"message\":\"$(printf '%s' "${1}" | \
       tr '%&;$"_[]{}-\r\n' ' ')\"}" > /dev/null
   fi
-  redis-cli -h redis LTRIM WATCHDOG_LOG 0 ${LOG_LINES} > /dev/null
   echo $(date) $(printf '%s\n' "${1}")
 }
 
@@ -60,24 +59,41 @@ function mail_error() {
   log_msg "Sent notification email to ${1}"
 }
 
-
 get_container_ip() {
   # ${1} is container
-  CONTAINER_ID=
+  CONTAINER_ID=()
+  CONTAINER_IPS=()
   CONTAINER_IP=
   LOOP_C=1
   until [[ ${CONTAINER_IP} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] || [[ ${LOOP_C} -gt 5 ]]; do
-    sleep 1
-    CONTAINER_ID=$(curl --silent http://dockerapi:8080/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" | jq -rc "select( .name | tostring | contains(\"${1}\")) | .id")
+    sleep 0.5
+    # get long container id for exact match
+    CONTAINER_ID=($(curl --silent --insecure https://dockerapi/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" | jq -rc "select( .name | tostring == \"${1}\") | .id"))
+    # returned id can have multiple elements (if scaled), shuffle for random test
+    CONTAINER_ID=($(printf "%s\n" "${CONTAINER_ID[@]}" | shuf))
     if [[ ! -z ${CONTAINER_ID} ]]; then
-      CONTAINER_IP=$(curl --silent http://dockerapi:8080/containers/${CONTAINER_ID}/json | jq -r '.NetworkSettings.Networks[].IPAddress')
+      for matched_container in "${CONTAINER_ID[@]}"; do
+        CONTAINER_IPS=($(curl --silent --insecure https://dockerapi/containers/${matched_container}/json | jq -r '.NetworkSettings.Networks[].IPAddress')) 
+        for ip_match in "${CONTAINER_IPS[@]}"; do
+          # grep will do nothing if one of these vars is empty
+          [[ -z ${ip_match} ]] && continue
+          [[ -z ${IPV4_NETWORK} ]] && continue
+          # only return ips that are part of our network
+          if ! grep -q ${IPV4_NETWORK} <(echo ${ip_match}); then
+            continue
+          else
+            CONTAINER_IP=${ip_match}
+            break
+          fi
+        done
+        [[ ! -z ${CONTAINER_IP} ]] && break
+      done
     fi
     LOOP_C=$((LOOP_C + 1))
   done
   [[ ${LOOP_C} -gt 5 ]] && echo 240.0.0.0 || echo ${CONTAINER_IP}
 }
 
-# Check functions
 nginx_checks() {
   err_count=0
   diff_c=0
@@ -107,8 +123,8 @@ mysql_checks() {
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     host_ip=$(get_container_ip mysql-mailcow)
     err_c_cur=${err_count}
-    /usr/lib/nagios/plugins/check_mysql -H ${host_ip} -P 3306 -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} 1>&2; err_count=$(( ${err_count} + $? ))
-    /usr/lib/nagios/plugins/check_mysql_query -H ${host_ip} -P 3306 -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} -q "SELECT COUNT(*) FROM information_schema.tables" 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_mysql -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_mysql_query -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} -q "SELECT COUNT(*) FROM information_schema.tables" 1>&2; err_count=$(( ${err_count} + $? ))
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
     progress "MySQL/MariaDB" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
@@ -127,8 +143,7 @@ sogo_checks() {
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     host_ip=$(get_container_ip sogo-mailcow)
     err_c_cur=${err_count}
-    /usr/lib/nagios/plugins/check_http -4 -H ${host_ip} -u /WebServerResources/css/theme-default.css -p 9192 -R md-default-theme 1>&2; err_count=$(( ${err_count} + $? ))
-    /usr/lib/nagios/plugins/check_http -4 -H ${host_ip} -u /SOGo.index/ -p 20000 -R "SOGo\sGroupware" 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_http -4 -H ${host_ip} -u /SOGo.index/ -p 20000 -R "SOGo\.MainUI" 1>&2; err_count=$(( ${err_count} + $? ))
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
     progress "SOGo" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
@@ -190,8 +205,8 @@ phpfpm_checks() {
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     host_ip=$(get_container_ip php-fpm-mailcow)
     err_c_cur=${err_count}
-    cgi-fcgi -bind -connect ${host_ip}:9000 | grep "Content-type" 1>&2; err_count=$(( ${err_count} + ($? * 2)))
-    cgi-fcgi -bind -connect ${host_ip}:9001 | grep "Content-type" 1>&2; err_count=$(( ${err_count} + ($? * 2)))
+    nc -z ${host_ip} 9001 ; err_count=$(( ${err_count} + ($? * 2)))
+    nc -z ${host_ip} 9002 ; err_count=$(( ${err_count} + ($? * 2)))
     /usr/lib/nagios/plugins/check_ping -4 -H ${host_ip} -w 2000,10% -c 4000,100% -p2 1>&2; err_count=$(( ${err_count} + $? ))
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
@@ -211,7 +226,7 @@ rspamd_checks() {
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     host_ip=$(get_container_ip rspamd-mailcow)
     err_c_cur=${err_count}
-    SCORE=$(/usr/bin/curl -s --data-binary @- --unix-socket /rspamd-sock/rspamd.sock http://rspamd/scan -d '
+    SCORE=$(/usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan -d '
 To: null@localhost
 From: watchdog@localhost
 
@@ -327,12 +342,12 @@ done
 # Monitor dockerapi
 (
 while true; do
-  while nc -z dockerapi 8080; do
+  while nc -z dockerapi 443; do
     sleep 3
   done
   log_msg "Cannot find dockerapi-mailcow, waiting to recover..."
   kill -STOP ${BACKGROUND_TASKS[*]}
-  until nc -z dockerapi 8080; do
+  until nc -z dockerapi 443; do
     sleep 3
   done
   kill -CONT ${BACKGROUND_TASKS[*]}
@@ -347,10 +362,10 @@ while true; do
   if [[ ${com_pipe_answer} =~ .+-mailcow ]]; then
     kill -STOP ${BACKGROUND_TASKS[*]}
     sleep 3
-    CONTAINER_ID=$(curl --silent http://dockerapi:8080/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" | jq -rc "select( .name | tostring | contains(\"${com_pipe_answer}\")) | .id")
+    CONTAINER_ID=$(curl --silent --insecure https://dockerapi/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" | jq -rc "select( .name | tostring | contains(\"${com_pipe_answer}\")) | .id")
     if [[ ! -z ${CONTAINER_ID} ]]; then
       log_msg "Sending restart command to ${CONTAINER_ID}..."
-      curl --silent -XPOST http://dockerapi:8080/containers/${CONTAINER_ID}/restart
+      curl --silent --insecure -XPOST https://dockerapi/containers/${CONTAINER_ID}/restart
     fi
     log_msg "Wait for restarted container to settle and continue watching..."
     sleep 30s

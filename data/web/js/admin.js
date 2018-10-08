@@ -9,6 +9,32 @@ jQuery(function($){
     e.preventDefault();
     $('#import_dkim_arrow').toggleClass("animation");
   });
+  $("#duplicate_dkim_legend").on('click', function(e) {
+    e.preventDefault();
+    $('#duplicate_dkim_arrow').toggleClass("animation"); 
+  });
+  $("#api_legend").on('click', function(e) {
+    e.preventDefault();
+    $('#api_arrow').toggleClass("animation"); 
+  });
+  $("#rspamd_preset_1").on('click', function(e) {
+    e.preventDefault();
+    $("form[data-id=rsetting]").find("#adminRspamdSettingsDesc").val(lang.rsettings_preset_1);
+    $("form[data-id=rsetting]").find("#adminRspamdSettingsContent").val('priority = 10;\nauthenticated = yes;\napply "default" {\n  symbols_enabled = ["DKIM_SIGNED", "RATELIMIT_UPDATE", "RATELIMIT_CHECK", "DYN_RL_CHECK", "HISTORY_SAVE", "MILTER_HEADERS", "ARC_SIGNED"];\n}');
+  });
+  $("#rspamd_preset_2").on('click', function(e) {
+    e.preventDefault();
+    $("form[data-id=rsetting]").find("#adminRspamdSettingsDesc").val(lang.rsettings_preset_2);
+    $("form[data-id=rsetting]").find("#adminRspamdSettingsContent").val('priority = 10;\nrcpt = "/postmaster@.*/";\nwant_spam = yes;');
+  });
+  $("#dkim_missing_keys").on('click', function(e) {
+    e.preventDefault();
+     var domains = [];
+     $('.dkim_missing').each(function() {
+       domains.push($(this).val());
+     });
+     $('#dkim_add_domains').val(domains);
+  });
   function draw_domain_admins() {
     ft_domainadmins = FooTable.init('#domainadminstable', {
       "columns": [
@@ -17,7 +43,7 @@ jQuery(function($){
         {"name":"selected_domains","title":lang.admin_domains,"breakpoints":"xs sm"},
         {"name":"tfa_active","title":"TFA", "filterable": false,"style":{"maxWidth":"80px","width":"80px"}},
         {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
-        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
+        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"250px","width":"250px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "rows": $.ajax({
         dataType: 'json',
@@ -32,7 +58,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"position": "left","connectors": false,"placeholder": lang.filter_table
+      "filtering": {"enabled": true,"delay": 1,"position": "left","connectors": false,"placeholder": lang.filter_table
       },
       "sorting": {"enabled": true}
     });
@@ -69,7 +95,7 @@ jQuery(function($){
         {"name":"id","type":"text","title":"ID","style":{"width":"50px"}},
         {"name":"hostname","type":"text","title":lang.host,"style":{"width":"250px"}},
         {"name":"username","title":lang.username,"breakpoints":"xs sm"},
-        {"name":"used_by_domains","title":lang.in_use_by, "type": "text","breakpoints":"xs sm"},
+        {"name":"used_by_domains","title":lang.in_use_by,"style":{"width":"110px"}, "type": "text","breakpoints":"xs sm"},
         {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"280px","width":"280px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
@@ -95,15 +121,15 @@ jQuery(function($){
       $.each(data, function (i, item) {
         item.action = '<div class="btn-group">' +
           '<a href="#" data-toggle="modal" id="miau" data-target="#testRelayhostModal" data-relayhost-id="' + encodeURI(item.id) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-stats"></span> Test</a>' +
-          '<a href="/edit.php?relayhost=' + encodeURI(item.id) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
-          '<a href="#" id="delete_selected" data-id="single-rlshost" data-api-url="delete/relayhost" data-item="' + encodeURI(item.id) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+          '<a href="/edit/relayhost/' + encodeURI(item.id) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
+          '<a href="#" data-action="delete_selected" data-id="single-rlshost" data-api-url="delete/relayhost" data-item="' + encodeURI(item.id) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
           '</div>';
         item.chkbox = '<input type="checkbox" data-id="rlyhosts" name="multi_select" value="' + item.id + '" />';
       });
     } else if (table == 'forwardinghoststable') {
       $.each(data, function (i, item) {
         item.action = '<div class="btn-group">' +
-          '<a href="#" id="delete_selected" data-id="single-fwdhost" data-api-url="delete/fwdhost" data-item="' + encodeURI(item.host) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+          '<a href="#" data-action="delete_selected" data-id="single-fwdhost" data-api-url="delete/fwdhost" data-item="' + encodeURI(item.host) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
           '</div>';
         if (item.keep_spam == "yes") {
           item.keep_spam = lang.no;
@@ -115,10 +141,12 @@ jQuery(function($){
       });
     } else if (table == 'domainadminstable') {
       $.each(data, function (i, item) {
+        item.selected_domains = escapeHtml(item.selected_domains.toString().replace(/,/g, " "));
         item.chkbox = '<input type="checkbox" data-id="domain_admins" name="multi_select" value="' + item.username + '" />';
         item.action = '<div class="btn-group">' +
-          '<a href="/edit.php?domainadmin=' + encodeURI(item.username) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
-          '<a href="#" id="delete_selected" data-id="single-domain-admin" data-api-url="delete/domain-admin" data-item="' + encodeURI(item.username) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+          '<a href="/edit/domainadmin/' + encodeURI(item.username) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
+          '<a href="#" data-action="delete_selected" data-id="single-domain-admin" data-api-url="delete/domain-admin" data-item="' + encodeURI(item.username) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+          '<a href="/index.php?duallogin=' + encodeURIComponent(item.username) + '" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-user"></span> Login</a>' +
           '</div>';
       });
     }
@@ -182,6 +210,9 @@ jQuery(function($){
 $(window).load(function(){
   initial_width = $("#sidebar-admin").width();
   $("#scrollbox").css("width", initial_width);
+  if (sessionStorage.scrollTop > 70) {
+    $('#scrollbox').addClass('scrollboxFixed');
+  }
   $(window).bind('scroll', function() {
     if ($(window).scrollTop() > 70) {
       $('#scrollbox').addClass('scrollboxFixed');

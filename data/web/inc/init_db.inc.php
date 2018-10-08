@@ -3,7 +3,7 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "19022018_0839";
+    $db_version = "03102018_1502";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -67,6 +67,31 @@ function init_db_schema() {
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
       ),
+      "_sogo_static_view" => array(
+        "cols" => array(
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "domain" => "VARCHAR(255) NOT NULL",
+          "c_name" => "VARCHAR(255) NOT NULL",
+          "c_password" => "VARCHAR(255) NOT NULL DEFAULT ''",
+          "c_cn" => "VARCHAR(255)",
+          "mail" => "VARCHAR(255) NOT NULL",
+          // TODO -> use TEXT and check if SOGo login breaks on empty aliases
+          "aliases" => "TEXT NOT NULL",
+          "ad_aliases" => "VARCHAR(6144) NOT NULL DEFAULT ''",
+          "home" => "VARCHAR(255)",
+          "kind" => "VARCHAR(100) NOT NULL DEFAULT ''",
+          "multiple_bookings" => "INT NOT NULL DEFAULT -1"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_uid")
+          ),
+          "key" => array(
+            "domain" => array("domain")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
       "relayhosts" => array(
         "cols" => array(
           "id" => "INT NOT NULL AUTO_INCREMENT",
@@ -87,6 +112,7 @@ function init_db_schema() {
       ),
       "alias" => array(
         "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
           "address" => "VARCHAR(255) NOT NULL",
           "goto" => "TEXT NOT NULL",
           "domain" => "VARCHAR(255) NOT NULL",
@@ -96,7 +122,10 @@ function init_db_schema() {
         ),
         "keys" => array(
           "primary" => array(
-            "" => array("address")
+            "" => array("id")
+          ),
+          "unique" => array(
+            "address" => array("address")
           ),
           "key" => array(
             "domain" => array("domain")
@@ -122,7 +151,7 @@ function init_db_schema() {
               "col" => "username",
               "ref" => "admin.username",
               "delete" => "CASCADE",
-              "update" => "NO ACTION"
+              "update" => "CASCADE"
             )
           )
         ),
@@ -130,10 +159,15 @@ function init_db_schema() {
       ),
       "sender_acl" => array(
         "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
           "logged_in_as" => "VARCHAR(255) NOT NULL",
           "send_as" => "VARCHAR(255) NOT NULL"
         ),
-        "keys" => array(),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          )
+        ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
       ),
       "domain" => array(
@@ -155,6 +189,26 @@ function init_db_schema() {
           "primary" => array(
             "" => array("domain")
           )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "tls_policy_override" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "dest" => "VARCHAR(255) NOT NULL",
+          "policy" => "ENUM('none', 'may', 'encrypt', 'dane', 'dane-only', 'fingerprint', 'verify', 'secure') NOT NULL",
+          "parameters" => "VARCHAR(255) DEFAULT ''",
+          "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
+          "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
+          "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          ),
+          "unique" => array(
+            "dest" => array("dest")
+          ),
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
       ),
@@ -191,7 +245,7 @@ function init_db_schema() {
           "domain" => "VARCHAR(255) NOT NULL",
           "attributes" => "JSON",
           "kind" => "VARCHAR(100) NOT NULL DEFAULT ''",
-          "multiple_bookings" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "multiple_bookings" => "INT NOT NULL DEFAULT -1",
           "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
           "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
@@ -246,12 +300,12 @@ function init_db_schema() {
           "delimiter_action" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "syncjobs" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "eas_reset" => "TINYINT(1) NOT NULL DEFAULT '1'",
-          "filters" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "quarantine" => "TINYINT(1) NOT NULL DEFAULT '1'",
-          "bcc_maps" => "TINYINT(1) NOT NULL DEFAULT '1'",
-          "recipient_maps" => "TINYINT(1) NOT NULL DEFAULT '0'",
           ),
         "keys" => array(
+          "primary" => array(
+            "" => array("username")
+          ),
           "fkey" => array(
             "fk_username" => array(
               "col" => "username",
@@ -300,6 +354,8 @@ function init_db_schema() {
           "object" => "VARCHAR(255) NOT NULL DEFAULT ''",
           "option" => "VARCHAR(50) NOT NULL DEFAULT ''",
           "value" => "VARCHAR(100) NOT NULL DEFAULT ''",
+          "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
+          "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
           "prefid" => "INT(11) NOT NULL AUTO_INCREMENT"
         ),
         "keys" => array(
@@ -308,6 +364,41 @@ function init_db_schema() {
           ),
           "key" => array(
             "object" => array("object")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "settingsmap" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "desc" => "VARCHAR(255) NOT NULL",
+          "content" => "LONGTEXT NOT NULL",
+          "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
+          "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
+          "active" => "TINYINT(1) NOT NULL DEFAULT '0'"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "logs" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "task" => "CHAR(32) NOT NULL DEFAULT '000000'",
+          "type" => "VARCHAR(32) DEFAULT ''",
+          "msg" => "TEXT",
+          "call" => "TEXT",
+          "user" => "VARCHAR(64) NOT NULL",
+          "role" => "VARCHAR(32) NOT NULL",
+          "remote" => "VARCHAR(39) NOT NULL",
+          "time" => "INT(11) NOT NULL"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
           )
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
@@ -327,14 +418,44 @@ function init_db_schema() {
       ),
       "domain_admins" => array(
         "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
           "username" => "VARCHAR(255) NOT NULL",
           "domain" => "VARCHAR(255) NOT NULL",
           "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
         ),
         "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          ),
           "key" => array(
             "username" => array("username")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "da_acl" => array(
+        "cols" => array(
+          "username" => "VARCHAR(255) NOT NULL",
+          "syncjobs" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "quarantine" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "login_as" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "bcc_maps" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "filters" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "ratelimit" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "spam_policy" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("username")
+          ),
+          "fkey" => array(
+            "fk_domain_admin_acl" => array(
+              "col" => "username",
+              "ref" => "domain_admins.username",
+              "delete" => "CASCADE",
+              "update" => "NO ACTION"
+            )
           )
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
@@ -362,6 +483,10 @@ function init_db_schema() {
           "delete2" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "automap" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "skipcrossduplicates" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "custom_params" => "VARCHAR(512) NOT NULL DEFAULT ''",
+          "timeout1" => "SMALLINT NOT NULL DEFAULT '600'",
+          "timeout2" => "SMALLINT NOT NULL DEFAULT '600'",
+          "subscribeall" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "is_running" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "returned_text" => "MEDIUMTEXT",
           "last_run" => "TIMESTAMP NULL DEFAULT NULL",
@@ -448,6 +573,187 @@ function init_db_schema() {
           ),
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_acl" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "c_folder_id" => "INT NOT NULL",
+          "c_object" => "VARCHAR(255) NOT NULL",
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "c_role" => "VARCHAR(80) NOT NULL"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          ),
+          "key" => array(
+            "sogo_acl_c_folder_id_idx" => array("c_folder_id"),
+            "sogo_acl_c_uid_idx" => array("c_uid")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_alarms_folder" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "c_path" => "VARCHAR(255) NOT NULL",
+          "c_name" => "VARCHAR(255) NOT NULL",
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "c_recurrence_id" => "INT(11) DEFAULT NULL",
+          "c_alarm_number" => "INT(11) NOT NULL",
+          "c_alarm_date" => "INT(11) NOT NULL"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_cache_folder" => array(
+        "cols" => array(
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "c_path" => "VARCHAR(255) NOT NULL",
+          "c_parent_path" => "VARCHAR(255) DEFAULT NULL",
+          "c_type" => "TINYINT(3) unsigned NOT NULL",
+          "c_creationdate" => "INT(11) NOT NULL",
+          "c_lastmodified" => "INT(11) NOT NULL",
+          "c_version" => "INT(11) NOT NULL DEFAULT '0'",
+          "c_deleted" => "TINYINT(4) NOT NULL DEFAULT '0'",
+          "c_content" => "LONGTEXT"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_uid", "c_path")
+          ),
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_folder_info" => array(
+        "cols" => array(
+          "c_folder_id" => "BIGINT(20) unsigned NOT NULL AUTO_INCREMENT",
+          "c_path" => "VARCHAR(255) NOT NULL",
+          "c_path1" => "VARCHAR(255) NOT NULL",
+          "c_path2" => "VARCHAR(255) DEFAULT NULL",
+          "c_path3" => "VARCHAR(255) DEFAULT NULL",
+          "c_path4" => "VARCHAR(255) DEFAULT NULL",
+          "c_foldername" => "VARCHAR(255) NOT NULL",
+          "c_location" => "VARCHAR(2048) DEFAULT NULL",
+          "c_quick_location" => "VARCHAR(2048) DEFAULT NULL",
+          "c_acl_location" => "VARCHAR(2048) DEFAULT NULL",
+          "c_folder_type" => "VARCHAR(255) NOT NULL"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_path")
+          ),
+          "unique" => array(
+            "c_folder_id" => array("c_folder_id")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_quick_appointment" => array(
+        "cols" => array(
+          "c_folder_id" => "INT NOT NULL",
+          "c_name" => "VARCHAR(255) NOT NULL",
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "c_startdate" => "INT",
+          "c_enddate" => "INT",
+          "c_cycleenddate" => "INT",
+          "c_title" => "VARCHAR(1000) NOT NULL",
+          "c_participants" => "TEXT",
+          "c_isallday" => "INT",
+          "c_iscycle" => "INT",
+          "c_cycleinfo" => "TEXT",
+          "c_classification" => "INT NOT NULL",
+          "c_isopaque" => "INT NOT NULL",
+          "c_status" => "INT NOT NULL",
+          "c_priority" => "INT",
+          "c_location" => "VARCHAR(255)",
+          "c_orgmail" => "VARCHAR(255)",
+          "c_partmails" => "TEXT",
+          "c_partstates" => "TEXT",
+          "c_category" => "VARCHAR(255)",
+          "c_sequence" => "INT",
+          "c_component" => "VARCHAR(10) NOT NULL",
+          "c_nextalarm" => "INT",
+          "c_description" => "TEXT"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_folder_id", "c_name")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_quick_contact" => array(
+        "cols" => array(
+          "c_folder_id" => "INT NOT NULL",
+          "c_name" => "VARCHAR(255) NOT NULL",
+          "c_givenname" => "VARCHAR(255)",
+          "c_cn" => "VARCHAR(255)",
+          "c_sn" => "VARCHAR(255)",
+          "c_screenname" => "VARCHAR(255)",
+          "c_l" => "VARCHAR(255)",
+          "c_mail" => "TEXT",
+          "c_o" => "VARCHAR(255)",
+          "c_ou" => "VARCHAR(255)",
+          "c_telephonenumber" => "VARCHAR(255)",
+          "c_categories" => "VARCHAR(255)",
+          "c_component" => "VARCHAR(10) NOT NULL",
+          "c_hascertificate" => "INT4 DEFAULT 0"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_folder_id", "c_name")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_sessions_folder" => array(
+        "cols" => array(
+          "c_id" => "VARCHAR(255) NOT NULL",
+          "c_value" => "VARCHAR(255) NOT NULL",
+          "c_creationdate" => "INT(11) NOT NULL",
+          "c_lastseen" => "INT(11) NOT NULL"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_id")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_store" => array(
+        "cols" => array(
+          "c_folder_id" => "INT NOT NULL",
+          "c_name" => "VARCHAR(255) NOT NULL",
+          "c_content" => "MEDIUMTEXT NOT NULL",
+          "c_creationdate" => "INT NOT NULL",
+          "c_lastmodified" => "INT NOT NULL",
+          "c_version" => "INT NOT NULL",
+          "c_deleted" => "INT"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_folder_id", "c_name")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sogo_user_profile" => array(
+        "cols" => array(
+          "c_uid" => "VARCHAR(255) NOT NULL",
+          "c_defaults" => "LONGTEXT",
+          "c_settings" => "LONGTEXT"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("c_uid")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
       )
     );
 
@@ -491,9 +797,18 @@ function init_db_schema() {
           $pdo->query($row['FKEY_DROP']);
         }
         foreach($properties['cols'] as $column => $type) {
-          $stmt = $pdo->query("SHOW COLUMNS FROM `" . $table . "` LIKE '" . $column . "'");
+          $stmt = $pdo->query("SHOW COLUMNS FROM `" . $table . "` LIKE '" . $column . "'"); 
           $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
           if ($num_results == 0) {
+            if (strpos($type, 'AUTO_INCREMENT') !== false) {
+              $type = $type . ' PRIMARY KEY ';
+              // Adding an AUTO_INCREMENT key, need to drop primary keys first, if exists
+              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = 'PRIMARY'");
+              $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
+              if ($num_results != 0) {
+                $pdo->query("ALTER TABLE `" . $table . "` DROP PRIMARY KEY");
+              }
+            }
             $pdo->query("ALTER TABLE `" . $table . "` ADD `" . $column . "` " . $type);
           }
           else {
@@ -504,7 +819,7 @@ function init_db_schema() {
           if (strtolower($key_type) == 'primary') {
             foreach ($key_content as $key_values) {
               $fields = "`" . implode("`, `", $key_values) . "`";
-              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = 'PRIMARY'");
+              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = 'PRIMARY'"); 
               $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
               $is_drop = ($num_results != 0) ? "DROP PRIMARY KEY, " : "";
               $pdo->query("ALTER TABLE `" . $table . "` " . $is_drop . "ADD PRIMARY KEY (" . $fields . ")");
@@ -513,7 +828,7 @@ function init_db_schema() {
           if (strtolower($key_type) == 'key') {
             foreach ($key_content as $key_name => $key_values) {
               $fields = "`" . implode("`, `", $key_values) . "`";
-              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'");
+              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'"); 
               $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
               $is_drop = ($num_results != 0) ? "DROP INDEX `" . $key_name . "`, " : "";
               $pdo->query("ALTER TABLE `" . $table . "` " . $is_drop . "ADD KEY `" . $key_name . "` (" . $fields . ")");
@@ -522,7 +837,7 @@ function init_db_schema() {
           if (strtolower($key_type) == 'unique') {
             foreach ($key_content as $key_name => $key_values) {
               $fields = "`" . implode("`, `", $key_values) . "`";
-              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'");
+              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'"); 
               $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
               $is_drop = ($num_results != 0) ? "DROP INDEX `" . $key_name . "`, " : "";
               $pdo->query("ALTER TABLE `" . $table . "` " . $is_drop . "ADD UNIQUE KEY `" . $key_name . "` (" . $fields . ")");
@@ -531,7 +846,7 @@ function init_db_schema() {
           if (strtolower($key_type) == 'fkey') {
             foreach ($key_content as $key_name => $key_values) {
               $fields = "`" . implode("`, `", $key_values) . "`";
-              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'");
+              $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = '" . $key_name . "'"); 
               $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
               if ($num_results != 0) {
                 $pdo->query("ALTER TABLE `" . $table . "` DROP INDEX `" . $key_name . "`");
@@ -543,8 +858,8 @@ function init_db_schema() {
           }
         }
         // Drop all vanished columns
-        $stmt = $pdo->query("SHOW COLUMNS FROM `" . $table . "`");
-        $cols_in_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $pdo->query("SHOW COLUMNS FROM `" . $table . "`"); 
+        $cols_in_table = $stmt->fetchAll(PDO::FETCH_ASSOC); 
         while ($row = array_shift($cols_in_table)) {
           if (!array_key_exists($row['Field'], $properties['cols'])) {
             $pdo->query("ALTER TABLE `" . $table . "` DROP COLUMN `" . $row['Field'] . "`;");
@@ -552,8 +867,8 @@ function init_db_schema() {
         }
 
         // Step 1: Get all non-primary keys, that currently exist and those that should exist
-        $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE `Key_name` != 'PRIMARY'");
-        $keys_in_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE `Key_name` != 'PRIMARY'"); 
+        $keys_in_table = $stmt->fetchAll(PDO::FETCH_ASSOC); 
         $keys_to_exist = array();
         if (isset($properties['keys']['unique']) && is_array($properties['keys']['unique'])) {
           foreach ($properties['keys']['unique'] as $key_name => $key_values) {
@@ -579,7 +894,7 @@ function init_db_schema() {
         }
         // Step 3: Drop all vanished primary keys
         if (!isset($properties['keys']['primary'])) {
-          $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = 'PRIMARY'");
+          $stmt = $pdo->query("SHOW KEYS FROM `" . $table . "` WHERE Key_name = 'PRIMARY'"); 
           $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
           if ($num_results != 0) {
             $pdo->query("ALTER TABLE `" . $table . "` DROP PRIMARY KEY");
@@ -590,7 +905,7 @@ function init_db_schema() {
         // Create table if it is missing
         $sql = "CREATE TABLE IF NOT EXISTS `" . $table . "` (";
         foreach($properties['cols'] as $column => $type) {
-          $sql .= $column . " " . $type . ",";
+          $sql .= "`" . $column . "` " . $type . ",";
         }
         foreach($properties['keys'] as $key_type => $key_content) {
           if (strtolower($key_type) == 'primary') {
@@ -650,7 +965,7 @@ DELIMITER ;';
     }
 
     // Inject admin if not exists
-    $stmt = $pdo->query("SELECT NULL FROM `admin`");
+    $stmt = $pdo->query("SELECT NULL FROM `admin`"); 
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
     if ($num_results == 0) {
     $stmt = $pdo->query("INSERT INTO `admin` (`username`, `password`, `superadmin`, `created`, `modified`, `active`)
@@ -661,7 +976,7 @@ DELIMITER ;';
     $stmt = $pdo->query("DELETE FROM `admin` WHERE `username` NOT IN  (SELECT `username` FROM `domain_admins`);");
     }
     // Insert new DB schema version
-    $stmt = $pdo->query("REPLACE INTO `versions` (`application`, `version`) VALUES ('db_schema', '" . $db_version . "');");
+    $stmt = $pdo->query("REPLACE INTO `versions` (`application`, `version`) VALUES ('db_schema', '" . $db_version . "');"); 
 
     // Migrate tls_enforce_* options and add force_pw_update attribute
     $stmt = $pdo->query("UPDATE `mailbox` SET `attributes` = '{}' WHERE `attributes` IS NULL;");
@@ -672,18 +987,21 @@ DELIMITER ;';
           WHERE `username` = :username");
       $stmt->execute(array(':tls_enforce_in' => $tls_options['tls_enforce_in'], ':tls_enforce_out' => $tls_options['tls_enforce_out'], ':username' => $tls_user));
     }
-    $_SESSION['return'] = array(
+    $_SESSION['return'][] = array(
       'type' => 'success',
-      'msg' => 'Database initialisation completed'
+      'log' => array(__FUNCTION__),
+      'msg' => 'db_init_complete'
     );
 
-    // Fix user_acl
+    // Fix ACL
     $stmt = $pdo->query("INSERT INTO `user_acl` (`username`) SELECT `username` FROM `mailbox` WHERE `kind` = '' AND NOT EXISTS (SELECT `username` FROM `user_acl`);");
+    $stmt = $pdo->query("INSERT INTO `da_acl` (`username`) SELECT DISTINCT `username` FROM `domain_admins` WHERE `username` != 'admin' AND NOT EXISTS (SELECT `username` FROM `da_acl`);");
   }
   catch (PDOException $e) {
-    $_SESSION['return'] = array(
+    $_SESSION['return'][] = array(
       'type' => 'danger',
-      'msg' => 'Database initialisation failed: ' . $e->getMessage()
+      'log' => array(__FUNCTION__),
+      'msg' => array('mysql_error', $e)
     );
   }
 }

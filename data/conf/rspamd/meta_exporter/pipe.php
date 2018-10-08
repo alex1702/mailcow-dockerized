@@ -6,7 +6,8 @@ require_once "vars.inc.php";
 // Do not show errors, we log to using error_log
 ini_set('error_reporting', 0);
 // Init database
-$dsn = $database_type . ':host=' . $database_host . ';dbname=' . $database_name;
+//$dsn = $database_type . ':host=' . $database_host . ';dbname=' . $database_name;
+$dsn = $database_type . ":unix_socket=" . $database_sock . ";dbname=" . $database_name;
 $opt = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -44,7 +45,8 @@ if (!function_exists('getallheaders'))  {
   }
 }
 
-$raw_data = file_get_contents('php://input');
+$raw_data_content = file_get_contents('php://input');
+$raw_data = mb_convert_encoding($raw_data_content, 'HTML-ENTITIES', "UTF-8");
 $headers = getallheaders();
 
 $qid      = $headers['X-Rspamd-Qid'];
