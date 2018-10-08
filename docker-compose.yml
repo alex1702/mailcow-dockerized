@@ -19,7 +19,7 @@ services:
 
     mysql-mailcow:
       image: alpine/socat
-#     volumes:
+      volumes:
 #       - mysql-vol-1:/var/lib/mysql/
        - mysql-socket-vol-1:/var/run/mysqld/
 #       - ./data/conf/mysql/:/etc/mysql/conf.d/:ro
