@@ -23,7 +23,7 @@ services:
 #       - mysql-vol-1:/var/lib/mysql/
        - mysql-socket-vol-1:/var/run/mysqld/
 #       - ./data/conf/mysql/:/etc/mysql/conf.d/:ro
-      command: UNIX-LISTEN:/var/run/mysqld/mysqld.sock TCP:${DBHOSTEXT}
+      command: UNIX-LISTEN:/var/run/mysqld/mysqld.sock,reuseaddr,fork TCP-CONNECT:${DBHOSTEXT}
       restart: always
 #      dns:
 #        - ${IPV4_NETWORK:-172.22.1}.254
